@@ -1,6 +1,6 @@
 import React from 'react';
 import { Content, Card, CardItem, Text, Body, Right,Left } from 'native-base';
-import { TouchableWithoutFeedback } from 'react-native'
+import { TouchableWithoutFeedback, LayoutAnimation } from 'react-native'
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 import Icon  from 'react-native-vector-icons/Ionicons';
@@ -8,8 +8,11 @@ import Icon  from 'react-native-vector-icons/Ionicons';
 
 
 class ListItemView  extends React.Component {
+    componentWillUpdate(){
+        LayoutAnimation.spring();
+    }
     renderDescription(){
-        if(this.props.selectLibraryId === this.props.library.id){
+        if(this.props.expanded){
             return (
                 <CardItem content><Text>{this.props.library.description}</Text></CardItem>
             )
@@ -17,12 +20,11 @@ class ListItemView  extends React.Component {
     }
 
     libraryClick(){
-        console.log(this.props)
         this.props.selectLibrary(this.props.library.id);
     }
 
     getArrowIcon(){
-        return this.props.selectLibraryId === this.props.library.id ? <Icon name="ios-arrow-down" /> : <Icon name="ios-arrow-forward" />;
+        return this.props.expanded ? <Icon name="ios-arrow-down" /> : <Icon name="ios-arrow-forward" />;
     }
 
     render(){
@@ -55,9 +57,10 @@ const styles = {
     }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
+    const expanded = state.selectedLibraryId === ownProps.library.id;
     return {
-        selectLibraryId: state.selectedLibraryId
+        expanded: expanded
     }
 }
 
